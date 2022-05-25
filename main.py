@@ -30,14 +30,40 @@ def selection_sort(arr: List[int]):
     return arr
 
 
+def bubble_sort(arr: List[int]):
+    upper_bound = len(arr)
+    # Integers are not iterable, we have to use a reversed range to get 8 - 0 for our indices.
+    # C++: for (int i = arr.size(); i > 0; i--)
+    # We start from 8 because our inner loop bubbles up elements to this index, as i decrements we can assume
+    # That anything greater than i (in range) is sorted
+    for i in reversed(range(upper_bound)):
+        # If a swap was not needed the array is sorted, so we can return
+        swap_occurred = False
+        # Bubble up from our current index to the last sorted element
+        # i's index will be one less than the last sorted element's index
+        # C++:  for (int j = 0; j < i; j++)
+        for j in range(i):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swap_occurred = True
+        if not swap_occurred:
+            return arr
+    return arr
+
+
 if __name__ == '__main__':
-    to_sort = [58, 2, 1003, 3, 4, 5, 23, 23, 21]
-    insertion_sorted = insertion_sort(to_sort)
+    for_selection_sort = [58, 2, 1003, 3, 4, 5, 23, 23, 21]
+    for_insertion_sort = [58, 2, 1003, 3, 4, 5, 23, 23, 21]
+    for_bubble_sort = [58, 2, 1003, 3, 4, 5, 23, 23, 21]
+
+    insertion_sorted = insertion_sort(for_insertion_sort)
     print("Insertion Sorted: ")
     print(" ".join(map(str, insertion_sorted)))
-    selection_sorted = selection_sort(to_sort)
+
+    selection_sorted = selection_sort(for_selection_sort)
     print("Selection Sorted:")
     print(" ".join(map(str, selection_sorted)))
 
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    bubble_sorted = bubble_sort(for_bubble_sort)
+    print("Bubble Sorted: ")
+    print(" ".join(map(str, bubble_sorted)))
