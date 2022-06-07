@@ -158,6 +158,50 @@ def peak_of_mountain_array(arr: List[int]) -> int:
     return candidate
 
 
+# There are n packages that needs to be transported from one city to another, and you need to transport them there
+# within d days. For the ith package, the weight of the package is weights[i]. You are required to deliver them in
+# order with a rental truck. The rental trucks come in different sizes. The bigger trucks have greater weight
+# capacity but cost more to rent. To minimize cost, you want to deliver the packages in one truck once per day,
+# with a weight capacity as small as possible to save on rental cost. What is the minimum weight capacity of the
+# truck that is required to deliver all packages within d days?
+
+def can_ship_in_time(weights: List[int], max_weight: int, deadline: int) -> bool:
+    days_to_ship = 1
+    load_capacity = max_weight
+    i = 0
+    upper_bound = len(weights)
+
+    while i < upper_bound:
+        if load_capacity <= weights[i]:
+            load_capacity -= weights[i]
+            i += 1
+        else:
+            days_to_ship += 1
+            load_capacity = max_weight
+    return days_to_ship <= deadline
+
+
+def min_max_weight(weights: List[int], deadline: int) -> int:
+    # We know at minimum our ship needs to be able to contain our largest weighted object
+    min_ptr = max(weights)
+    # We know at max the ship should be able to carry all the packagea in one day
+    max_ptr = sum(weights)
+    # the solution is somewhere in the middle, we need to find the boundary for it with binary search
+    candidate = max_ptr
+    while min_ptr <= max_ptr:
+        # Find the middle of the min and max, since we know our answer is somewhere in the middle of the two
+        # Our size of truck can be any arbitrary number
+        middle = (min_ptr + max_ptr) // 2
+        # We found a candidate but check if we can find one even smaller to save on costs
+        if can_ship_in_time(weights, middle, deadline):
+            candidate = middle
+            max_ptr = middle - 1
+        # It was not feasible, so we need to increase the weight capacity of our trucks
+        else:
+            min_ptr = middle + 1
+    return candidate
+
+
 if __name__ == '__main__':
     sorted_arr = [1, 2, 3, 4, 5]
     print("Binary search: ")
