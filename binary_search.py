@@ -165,19 +165,26 @@ def peak_of_mountain_array(arr: List[int]) -> int:
 # with a weight capacity as small as possible to save on rental cost. What is the minimum weight capacity of the
 # truck that is required to deliver all packages within d days?
 
-def can_ship_in_time(weights: List[int], max_weight: int, deadline: int) -> bool:
+def can_ship_in_time(weights: List[int], trial_max_weight: int, deadline: int) -> bool:
+    # estimation of days to ship, we start with the assumption of one
     days_to_ship = 1
-    load_capacity = max_weight
+    # our load capacity starts at our max_weight which is currently a trial
+    load_capacity = trial_max_weight
+    # way to index throughout our entire array like a for loop
     i = 0
     upper_bound = len(weights)
 
     while i < upper_bound:
-        if load_capacity <= weights[i]:
+        # if our load_capacity can handle the current weight index then we subtract it from our load_capacity
+        # and increment our pointer
+        if load_capacity >= weights[i]:
             load_capacity -= weights[i]
             i += 1
+        # else if it could not, we increase our days to ship and reset our load_capacity
         else:
             days_to_ship += 1
-            load_capacity = max_weight
+            load_capacity = trial_max_weight
+
     return days_to_ship <= deadline
 
 
@@ -200,6 +207,52 @@ def min_max_weight(weights: List[int], deadline: int) -> int:
         else:
             min_ptr = middle + 1
     return candidate
+
+
+# You've begun working in the one and only Umbristan. As part of your job working for the government you are asked to
+# organize newspapers. Each morning your fellow coworkers will dilligently read through the newspapers carefully
+# examining its contents. It is your job to organize the newspapers into piles and hand them out to your coworkers to
+# read through. Each newspaper is assigned a time based on how much time it would take to read through its contents.
+# The newspapers are carefully layed out in a line in a particular order that must not be broken when assigning the
+# newspapers. That is you cannot pick and choose newspapers to make a pile to assign to a co-worker to read through.
+# Instead you must take a particular subsection of the line of newspapers, make a pile and give that to a co-worker.
+#
+# What is the minimum amount of time it would take to have your coworkers go through all the newspapers?
+
+# This is similar to our previous problem, except instead of a deadline we have number of coworkers
+# We want to find the shortest amount of time we can split up the newspaper reading
+
+def can_read_in_time(newspaper_read_times: List[int], coworkers: int, time_to_beat_or_equal: int):
+    time_taken, coworkers_needed = 0, 0
+
+    for read_time in newspaper_read_times:
+        # if one single read time is greater than our time to beat then it is impossible to beat the time
+        if read_time > time_to_beat_or_equal:
+            return False
+        # Split check, if our time take plus our current read leads to a larger read time then we need to split
+        if time_taken + read_time > time_to_beat_or_equal:
+            # "spawn" new coworker
+            time_taken = 0
+            coworkers_needed += 1
+        time_taken += read_time
+    # if we have leftover time that wasn't finished we need one more coworker
+    if time_taken != 0:
+        coworkers_needed += 1
+    # we successfully beat or equalled the time, but did we do it with the right amount of coworkers we were given
+    return coworkers_needed <= coworkers
+
+
+def newspaper_split(newspaper_read_times: List[int], coworkers: int):
+    # 1 <= newspapers.length <= 10^5
+    low, high = 0, 1000000001
+
+    while low <= high:
+        middle = (low + high) // 2
+        if can_read_in_time(newspaper_read_times, coworkers, middle):
+            high = middle - 1
+        else:
+            low = middle + 1
+    return high + 1
 
 
 if __name__ == '__main__':
