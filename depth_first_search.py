@@ -1,3 +1,7 @@
+import string
+from typing import List
+
+
 class Node:
     def __init__(self, val, left=None, right=None):
         self.val = val
@@ -48,14 +52,37 @@ def is_balanced_helper(node: Node) -> bool:
     return is_balanced(node) != -1
 
 
+def serialize(root: Node):
+    arr_to_stringify = []
+
+    def dfs(node: Node):
+        # Current node first operations
+        if node is None:
+            arr_to_stringify.append('N')
+            return
+        arr_to_stringify.append(str(node.val))
+        # Current node first operations
+        # Deep left
+        dfs(node.left)
+        # then right
+        dfs(node.right)
+    dfs(root)
+    print(' '.join(arr_to_stringify))
+
+
+
+def deserialize(s):
+    # AND HERE
+    return None
+
+
 if __name__ == '__main__':
     test_root = Node(1)
     test_root.left = Node(2)
-    test_root.left.left = Node(4)
+    test_root.left.left = Node(3)
     test_root.left.left.right = Node(7)
-
     test_root.left.right = Node(5)
     test_root.right = Node(3)
     test_root.right.right = Node(6)
     test_root.right.right.left = Node(8)
-    print(is_balanced_helper(test_root))
+    serialize(test_root)
