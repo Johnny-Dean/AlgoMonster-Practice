@@ -66,15 +66,59 @@ def serialize(root: Node):
         dfs(node.left)
         # then right
         dfs(node.right)
+
     dfs(root)
-    print(' '.join(arr_to_stringify))
+    return ' '.join(arr_to_stringify)
 
 
+# Other person in the comments uses a stack, which makes more sense to me as I don't know the context of iterator
+def deserialize(s: string):
+    def dfs(token_iterator: List):
+        # Pop removes the index passed in , we remove the top element on the stack
+        current_token = token_iterator.pop(0)
+        # If we reached a leaf then return a null pointer, this is what splits our tree as well
 
-def deserialize(s):
-    # AND HERE
-    return None
+        if current_token == "N":
+            return None
+        # Set our parent nodes value -> preorder
+        new_node = Node(int(current_token))
+        # Deep left tree
+        new_node.left = dfs(token_iterator)
+        # Deep right tree
+        new_node.right = dfs(token_iterator)
+        return new_node
 
+    # Passing in an interator that we will recursively consume
+    char_arr = s.split()
+    return dfs(char_arr)
+
+
+def print_preorder(curr_node: Node):
+    if curr_node is None:
+        print("Null")
+        return
+
+    print(curr_node.val)
+    print_preorder(curr_node.left)
+    print_preorder(curr_node.right)
+    return
+
+
+def lca(root, node1, node2):
+    def dfs(curr_node, node1, node2):
+        if curr_node is None:
+            return None
+
+        # Something to do with current node
+        left_side_ancestor = dfs(curr_node.left, node1, node2)
+        right_side_ancestor = dfs(curr_node.right, node1, node2)
+
+        if
+
+        return left_side_ancestor and right_side_ancestor
+
+
+    dfs(root, node1, node2)
 
 if __name__ == '__main__':
     test_root = Node(1)
@@ -85,4 +129,4 @@ if __name__ == '__main__':
     test_root.right = Node(3)
     test_root.right.right = Node(6)
     test_root.right.right.left = Node(8)
-    serialize(test_root)
+    print_preorder(deserialize(serialize(test_root)))
