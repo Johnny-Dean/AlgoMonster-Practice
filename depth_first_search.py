@@ -1,5 +1,6 @@
 import string
 from typing import List
+from math import inf
 
 
 class Node:
@@ -105,28 +106,73 @@ def print_preorder(curr_node: Node):
 
 
 def lca(root, node1, node2):
-    def dfs(curr_node, node1, node2):
+    def dfs(curr_node, n1, n2):
+        # Leaf
         if curr_node is None:
             return None
-
-        # Something to do with current node
-        left_side_ancestor = dfs(curr_node.left, node1, node2)
-        right_side_ancestor = dfs(curr_node.right, node1, node2)
-
-        if
-
-        return left_side_ancestor and right_side_ancestor
-
+        # Bubble up that we found one of then nodes
+        if curr_node is n1 or curr_node is n2:
+            return curr_node
+        # DFS
+        # @NOTE
+        left_side_ancestor = dfs(curr_node.left, n1, n2)
+        right_side_ancestor = dfs(curr_node.right, n1, n2)
+        # If we found both of our children in the current node we found the LCA
+        if left_side_ancestor and right_side_ancestor:
+            return curr_node
+        # Bubble up that we found the left child in this current DFS
+        if left_side_ancestor:
+            return left_side_ancestor
+        # Bubble up that we found the right child in this current DFS
+        if right_side_ancestor:
+            return right_side_ancestor
+        # Bubble up that we found neither
+        return None
 
     dfs(root, node1, node2)
 
+
+def valid_bst(root: Node) -> bool:
+    def dfs(curr_node, min_val, max_val):
+        if curr_node is None:
+            return True
+
+        if not min_val <= curr_node.val <= max_val:
+            return False
+        # Less than parent
+        left_side  = dfs(curr_node.left, min_val, curr_node.val)
+        # Greater than parent
+        right_side = dfs(curr_node.right, curr_node.val, max_val)
+
+        return left_side and right_side
+
+    return dfs(root, -inf, inf)
+
+
+def insert_bst(bst: Node, val: int):
+    def dfs(curr_node, to_insert):
+        if curr_node is None:
+            curr_node = Node(to_insert)
+            return curr_node
+
+        if val < curr_node.val:
+            dfs(curr_node.left, val)
+        elif val > curr_node.val:
+            dfs(curr_node.right, val)
+        # Same value
+        return curr_node
+
+    return dfs(bst, val)
+
+
 if __name__ == '__main__':
-    test_root = Node(1)
-    test_root.left = Node(2)
-    test_root.left.left = Node(3)
-    test_root.left.left.right = Node(7)
-    test_root.left.right = Node(5)
-    test_root.right = Node(3)
-    test_root.right.right = Node(6)
-    test_root.right.right.left = Node(8)
-    print_preorder(deserialize(serialize(test_root)))
+    bst = Node(8)
+    bst.left = Node(4)
+    bst.left.left = Node(2)
+    bst.left.right = Node(7)
+    bst.right = Node(12)
+    bst.right.right = Node(13)
+    bst.right.left = Node(11)
+    print(valid_bst(bst))
+    insert_bst(bst, 23)
+    print(valid_bst(bst))
