@@ -114,7 +114,6 @@ def lca(root, node1, node2):
         if curr_node is n1 or curr_node is n2:
             return curr_node
         # DFS
-        # @NOTE
         left_side_ancestor = dfs(curr_node.left, n1, n2)
         right_side_ancestor = dfs(curr_node.right, n1, n2)
         # If we found both of our children in the current node we found the LCA
@@ -126,7 +125,7 @@ def lca(root, node1, node2):
         # Bubble up that we found the right child in this current DFS
         if right_side_ancestor:
             return right_side_ancestor
-        # Bubble up that we found neither
+        # Bubble up that we found neither, means both are in the other half
         return None
 
     dfs(root, node1, node2)
@@ -140,7 +139,7 @@ def valid_bst(root: Node) -> bool:
         if not min_val <= curr_node.val <= max_val:
             return False
         # Less than parent
-        left_side  = dfs(curr_node.left, min_val, curr_node.val)
+        left_side = dfs(curr_node.left, min_val, curr_node.val)
         # Greater than parent
         right_side = dfs(curr_node.right, curr_node.val, max_val)
 
@@ -149,7 +148,7 @@ def valid_bst(root: Node) -> bool:
     return dfs(root, -inf, inf)
 
 
-def insert_bst(bst: Node, val: int):
+def insert_bst(tree: Node, val: int):
     def dfs(curr_node, to_insert):
         if curr_node is None:
             curr_node = Node(to_insert)
@@ -162,7 +161,21 @@ def insert_bst(bst: Node, val: int):
         # Same value
         return curr_node
 
-    return dfs(bst, val)
+    return dfs(tree, val)
+
+
+def invert_bt(tree: Node):
+    def dfs(parent):
+        if parent is None:
+            return None
+
+        parent.left, parent.right = parent.right, parent.left
+
+        dfs(parent.left)
+        dfs(parent.right)
+        return parent
+
+    dfs(tree)
 
 
 if __name__ == '__main__':
