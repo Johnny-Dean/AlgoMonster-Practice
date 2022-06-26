@@ -230,3 +230,4 @@ def openLock(self, deadends: List[str], target: str) -> int:
     if target in deadends or '0000' in deadends:
         return -1
     return bfs()
+
